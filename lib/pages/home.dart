@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grpc_client/pages/server_stream.dart';
 import 'package:flutter_grpc_client/pages/unary.dart';
 
 class Home extends StatelessWidget {
@@ -22,6 +23,17 @@ class Home extends StatelessWidget {
               },
               child: Text("Unary request"),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ServerStream(),
+                  ),
+                );
+              },
+              child: Text("Server stream"),
+            )
           ],
         ),
       ),
