@@ -7,14 +7,16 @@ class ServerStream extends StatefulWidget {
   _ServerStreamState createState() => _ServerStreamState();
 }
 
-class _ServerStreamState extends State<ServerStream> with GrpcClient {
+class _ServerStreamState extends State<ServerStream> {
   final TextEditingController _nameController = TextEditingController();
+  final GrpcClient _grpcClient = GrpcClient();
 
   List<String> _responseFromServer = [];
 
   @override
   void dispose() {
     _nameController.dispose();
+    _grpcClient.dispose();
     super.dispose();
   }
 
@@ -63,7 +65,7 @@ class _ServerStreamState extends State<ServerStream> with GrpcClient {
   }
 
   Future<void> callGrpc(String name) async {
-    final channel = getChannel();
+    final channel = _grpcClient.getChannel();
     final stub = GreetServiceClient(channel);
 
     try {

@@ -1,17 +1,28 @@
 import 'package:grpc/grpc.dart';
 
-mixin GrpcClient {
+class GrpcClient {
   static const String defaultPath = "localhost";
   static const int defaultPort = 50051;
 
+  ClientChannel? _channel;
+
   ClientChannel getChannel(
       {String path = defaultPath, int port = defaultPort}) {
-    return ClientChannel(
+    _channel = ClientChannel(
       defaultPath,
       port: defaultPort,
       options: ChannelOptions(
         credentials: ChannelCredentials.insecure(),
       ),
     );
+
+    return _channel!;
+  }
+
+  void dispose() {
+    if (_channel != null) {
+      _channel!.terminate();
+      _channel = null;
+    }
   }
 }

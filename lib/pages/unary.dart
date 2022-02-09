@@ -7,14 +7,16 @@ class Unary extends StatefulWidget {
   _UnaryState createState() => _UnaryState();
 }
 
-class _UnaryState extends State<Unary> with GrpcClient {
+class _UnaryState extends State<Unary> {
   final TextEditingController _nameController = TextEditingController();
+  final GrpcClient _grpcClient = GrpcClient();
 
   String serverRes = "";
 
   @override
   void dispose() {
     _nameController.dispose();
+    _grpcClient.dispose();
     super.dispose();
   }
 
@@ -57,7 +59,7 @@ class _UnaryState extends State<Unary> with GrpcClient {
 
   Future<void> callGrpc(String name) async {
     serverRes = "";
-    final channel = getChannel();
+    final channel = _grpcClient.getChannel();
     final stub = GreetServiceClient(channel);
 
     try {
