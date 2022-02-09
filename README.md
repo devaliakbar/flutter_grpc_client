@@ -1,6 +1,6 @@
-# Flutter gRPC
+# Flutter gRPC client
 
-A gRPC sample in flutter.
+A gRPC client sample in flutter.
 
 ## Getting Started
 
@@ -13,12 +13,14 @@ Step 2: Get the Dart protoc plugin by running
 $ pub global activate protoc_plugin
 ```
 
-and add `~/.pub-cache/bin` to your PATH
+Step 3: Add `~/.pub-cache/bin` to your PATH
 
-Step 3: Create proto files under "protos/" directory (example helloworld.proto)
+Step 4: Create proto files under "protos/" directory (example greet.proto)
 
-Step 4: Run this command to generate dart files under "lib/core/grpc/generated" directory:
+Step 5: Run this command to generate dart files under "lib/core/grpc/generated" directory:
 
 ```sh
-$ protoc --dart_out=grpc:lib/core/grpc/generated -Iprotos protos/helloworld.proto
+$ protoc --dart_out=grpc:lib/core/grpc/generated -Iprotos protos/greet.proto
 ```
+
+[Server implmentation in go](https://github.com/devaliakbar/grpc_go/tree/master/greet).

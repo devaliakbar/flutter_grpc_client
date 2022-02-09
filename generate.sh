@@ -1,0 +1,1 @@
+protoc --dart_out=grpc:lib/core/grpc/generated -Iprotos protos/greet.proto
