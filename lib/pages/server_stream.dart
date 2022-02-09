@@ -95,6 +95,8 @@ class _ServerStreamState extends State<ServerStream> {
 
     await _disposeChannel();
     _responseFromServer.clear();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

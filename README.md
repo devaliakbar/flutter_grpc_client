@@ -1,6 +1,7 @@
 # Flutter gRPC client
 
-A gRPC client sample in flutter.
+A gRPC client sample in flutter
+See [gRPC server implmentation in go](https://github.com/devaliakbar/grpc_go/tree/master/greet).
 
 ## Getting Started
 
@@ -22,5 +23,3 @@ Step 5: Run this command to generate dart files under "lib/core/grpc/generated" 
 ```sh
 $ protoc --dart_out=grpc:lib/core/grpc/generated -Iprotos protos/greet.proto
 ```
-
-[Server implmentation in go](https://github.com/devaliakbar/grpc_go/tree/master/greet).
