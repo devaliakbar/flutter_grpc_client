@@ -6,6 +6,8 @@ A gRPC sample in flutter.
 
 Put all proto files under "protos/" Directory
 
-Run this command : "protoc --dart_out=grpc:lib/core/grpc/generated protos/helloworld.proto"
+Run this command to generate dart files under "lib/core/grpc/generated" directory:
 
-The dart code will be generated here "lib/core/grpc/generated"
+```sh
+$ protoc --dart_out=grpc:lib/core/grpc/generated -Iprotos protos/helloworld.proto
+```
