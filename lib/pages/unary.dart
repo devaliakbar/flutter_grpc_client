@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grpc_client/core/grpc/generated/greet.pbgrpc.dart';
-import 'package:flutter_grpc_client/core/grpc/grpc_client.dart';
+import 'package:flutter_grpc_client/core/grpc/grpc_client_helper.dart';
 
 class Unary extends StatefulWidget {
   @override
@@ -9,14 +9,12 @@ class Unary extends StatefulWidget {
 
 class _UnaryState extends State<Unary> {
   final TextEditingController _nameController = TextEditingController();
-  final GrpcClient _grpcClient = GrpcClient();
 
   String serverRes = "";
 
   @override
   void dispose() {
     _nameController.dispose();
-    _grpcClient.dispose();
     super.dispose();
   }
 
@@ -59,7 +57,7 @@ class _UnaryState extends State<Unary> {
 
   Future<void> callGrpc(String name) async {
     serverRes = "";
-    final channel = _grpcClient.getChannel();
+    final channel = GrpcClientHelper.getChannel();
     final stub = GreetServiceClient(channel);
 
     try {
@@ -73,6 +71,6 @@ class _UnaryState extends State<Unary> {
     } catch (e) {
       print('Caught error: $e');
     }
-    await channel.shutdown();
+    await channel.terminate();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grpc_client/core/grpc/generated/greet.pbgrpc.dart';
-import 'package:flutter_grpc_client/core/grpc/grpc_client.dart';
+import 'package:flutter_grpc_client/core/grpc/grpc_client_helper.dart';
+import 'package:grpc/grpc.dart';
 
 class ServerStream extends StatefulWidget {
   @override
@@ -9,15 +10,25 @@ class ServerStream extends StatefulWidget {
 
 class _ServerStreamState extends State<ServerStream> {
   final TextEditingController _nameController = TextEditingController();
-  final GrpcClient _grpcClient = GrpcClient();
+
+  ClientChannel? _channel;
 
   List<String> _responseFromServer = [];
 
   @override
   void dispose() {
     _nameController.dispose();
-    _grpcClient.dispose();
+
+    _disposeChannel();
+
     super.dispose();
+  }
+
+  Future<void> _disposeChannel() async {
+    if (_channel != null) {
+      await _channel!.terminate();
+      _channel = null;
+    }
   }
 
   @override
@@ -37,16 +48,17 @@ class _ServerStreamState extends State<ServerStream> {
             SizedBox(
               height: 30,
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_nameController.text.trim().isNotEmpty) {
-                  callGrpc(_nameController.text.trim());
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  _nameController.text = "";
-                }
-              },
-              child: Text("Submit"),
-            ),
+            if (_channel == null)
+              ElevatedButton(
+                onPressed: () {
+                  if (_nameController.text.trim().isNotEmpty) {
+                    callGrpc(_nameController.text.trim());
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    _nameController.text = "";
+                  }
+                },
+                child: Text("Submit"),
+              ),
             SizedBox(
               height: 30,
             ),
@@ -65,8 +77,8 @@ class _ServerStreamState extends State<ServerStream> {
   }
 
   Future<void> callGrpc(String name) async {
-    final channel = _grpcClient.getChannel();
-    final stub = GreetServiceClient(channel);
+    _channel = GrpcClientHelper.getChannel();
+    final stub = GreetServiceClient(_channel!);
 
     try {
       final GreetManyTimesRequest request =
@@ -80,6 +92,9 @@ class _ServerStreamState extends State<ServerStream> {
     } catch (e) {
       print('Caught error: $e');
     }
-    await channel.shutdown();
+
+    await _disposeChannel();
+    _responseFromServer.clear();
+    setState(() {});
   }
 }
