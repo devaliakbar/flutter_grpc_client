@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grpc_client/pages/bidirection_stream.dart';
 import 'package:flutter_grpc_client/pages/client_stream.dart';
 import 'package:flutter_grpc_client/pages/server_stream.dart';
 import 'package:flutter_grpc_client/pages/unary.dart';
@@ -45,6 +46,17 @@ class Home extends StatelessWidget {
                 );
               },
               child: Text("Client stream"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => BidirectionStream(),
+                  ),
+                );
+              },
+              child: Text("Bidirection Stream"),
             )
           ],
         ),

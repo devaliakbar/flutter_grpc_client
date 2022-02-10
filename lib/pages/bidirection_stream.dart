@@ -5,12 +5,12 @@ import 'package:flutter_grpc_client/core/grpc/generated/greet.pbgrpc.dart';
 import 'package:flutter_grpc_client/core/grpc/grpc_client_helper.dart';
 import 'package:grpc/grpc.dart';
 
-class ClientStream extends StatefulWidget {
+class BidirectionStream extends StatefulWidget {
   @override
-  _ClientStreamState createState() => _ClientStreamState();
+  _BidirectionStreamState createState() => _BidirectionStreamState();
 }
 
-class _ClientStreamState extends State<ClientStream> {
+class _BidirectionStreamState extends State<BidirectionStream> {
   final TextEditingController _nameController = TextEditingController();
 
   String request = "";
@@ -19,8 +19,8 @@ class _ClientStreamState extends State<ClientStream> {
   ClientChannel? _channel;
 
   // ignore: close_sinks
-  StreamController<LongGreetRequest>? greetStreamController;
-  Stream<LongGreetRequest>? _greetStream;
+  StreamController<GreetEveryoneRequest>? greetStreamController;
+  Stream<GreetEveryoneRequest>? _greetStream;
 
   @override
   void dispose() {
@@ -51,7 +51,7 @@ class _ClientStreamState extends State<ClientStream> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Client stream"),
+        title: Text("Bidirection Stream"),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 15),
@@ -105,12 +105,12 @@ class _ClientStreamState extends State<ClientStream> {
   Future<void> _send(String req) async {
     try {
       if (_channel != null && greetStreamController != null) {
+        greetStreamController!
+            .add(GreetEveryoneRequest(greeting: Greeting(firstName: req)));
+      } else {
         serverRes = "";
 
-        greetStreamController!
-            .add(LongGreetRequest(greeting: Greeting(firstName: req)));
-      } else {
-        greetStreamController = StreamController<LongGreetRequest>();
+        greetStreamController = StreamController<GreetEveryoneRequest>();
         _greetStream = greetStreamController!.stream;
 
         _channel = GrpcClientHelper.getChannel();
@@ -118,11 +118,19 @@ class _ClientStreamState extends State<ClientStream> {
 
         ///ADD CURRENT MESSAGE
         _send(req);
-        final response = await stub.longGreet(_greetStream!);
+
+        await for (var res in stub.greetEveryone(_greetStream!)) {
+          setState(() {
+            if (serverRes.isEmpty) {
+              serverRes = "Response from server: ";
+            } else {
+              serverRes += ", ";
+            }
+            serverRes += res.result;
+          });
+        }
+
         _disposeChannel();
-        setState(() {
-          serverRes = "Response from server: " + response.result;
-        });
       }
     } catch (e) {
       print('Caught error: $e');
